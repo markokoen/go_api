@@ -8,21 +8,31 @@ import (
 	"github.com/spf13/viper"
 )
 
+// SetupModels howsit
 func SetupModels() *gorm.DB {
 
 	// Enable VIPER to read Environment Variables
 	viper.AutomaticEnv()
 
-	viper_user := viper.Get("POSTGRES_USER")
-	viper_password := viper.Get("POSTGRES_PASSWORD")
-	viper_db := viper.Get("POSTGRES_DB")
-	viper_host := viper.Get("POSTGRES_HOST")
-	viper_port := viper.Get("POSTGRES_PORT")
-	prosgret_conname := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", viper_host, viper_port, viper_user, viper_db, viper_password)
+	// viperUser := viper.Get("POSTGRES_USER")
+	// viperPassword := viper.Get("POSTGRES_PASSWORD")
+	// viperDb := viper.Get("POSTGRES_DB")
+	// viperHost := viper.Get("POSTGRES_HOST")
+	// viperPort := viper.Get("POSTGRES_PORT")
+	// postgresConName := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", viperHost, viperPort, viperUser, viperDb, viperPassword)
+	viperURL := viper.Get("POSTGRES_URL")
 
-	fmt.Println("conname is\t\t", prosgret_conname)
+	// fmt.Println("conname is\t\t", postgresConName)
 
-	db, err := gorm.Open("postgres", prosgret_conname)
+	// cmd := exec.Command("createdb", "-p", fmt.Sprintf("%v", viperPort), "-h", fmt.Sprintf("%v", viperHost), "-U", fmt.Sprintf("%v", "superuser"), "-e", fmt.Sprintf("%v", viperDb))
+	// var out bytes.Buffer
+	// cmd.Stdout = &out
+	// if err := cmd.Run(); err != nil {
+	// 	log.Printf("Error: %v", err)
+	// }
+	// log.Printf("Output: %q\n", out.String())
+	fmt.Println("DB connection: " + fmt.Sprintf("%v", viperURL))
+	db, err := gorm.Open("postgres", fmt.Sprintf("%v", viperURL))
 
 	if err != nil {
 		panic("Failed to connect to database!")
@@ -32,5 +42,6 @@ func SetupModels() *gorm.DB {
 
 	m := Post{Name: "Post1", Description: "My post description", ImageApp: "my image url", ImageWeb: "web img url"}
 	db.Create(&m)
+	fmt.Println("Post added to DB")
 	return db
 }
